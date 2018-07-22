@@ -1,0 +1,67 @@
+diff -Naur a/gcc/ada/gcc-interface/Makefile.in b/gcc/ada/gcc-interface/Makefile.in
+--- a/gcc/ada/gcc-interface/Makefile.in	2017-12-04 15:41:46.640816000 +0200
++++ b/gcc/ada/gcc-interface/Makefile.in	2018-03-17 15:45:36.629770758 +0200
+@@ -1932,7 +1932,7 @@
+ endif
+ 
+ # ARM linux, GNU eabi
+-ifeq ($(strip $(filter-out arm% linux-gnueabi%,$(target_cpu) $(target_os))),)
++ifeq ($(strip $(filter-out arm% linux-gnueabi% linux-muslgnueabi%,$(target_cpu) $(target_os))),)
+   LIBGNAT_TARGET_PAIRS = \
+   a-intnam.ads<a-intnam-linux.ads \
+   s-inmaop.adb<s-inmaop-posix.adb \
+diff -Naur a/gcc/ada/s-taprop-linux.adb b/gcc/ada/s-taprop-linux.adb
+--- a/gcc/ada/s-taprop-linux.adb	2017-01-23 15:24:47.196622000 +0200
++++ b/gcc/ada/s-taprop-linux.adb	2018-03-17 18:12:28.885072247 +0200
+@@ -271,14 +271,19 @@
+ 
+          begin
+             --  Set the rwlock to prefer writer to avoid writers starvation
++            --  Comment the prefere stuff out
++            --  As this is not portable to musl
++            --  (_np stands for non-portable and is a gnu clib extr)
+ 
+             Result := pthread_rwlockattr_init (RWlock_Attr'Access);
+             pragma Assert (Result = 0);
+ 
+-            Result := pthread_rwlockattr_setkind_np
+-              (RWlock_Attr'Access,
+-               PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP);
+-            pragma Assert (Result = 0);
++            --  snip snip
++            --  Result := pthread_rwlockattr_setkind_np
++            --    (RWlock_Attr'Access,
++            --    PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP);
++            --  pragma Assert (Result = 0);
++            --  snip snip
+ 
+             Result := pthread_rwlock_init (L.RW'Access, RWlock_Attr'Access);
+ 
+diff -Naur a/gcc/ada/terminals.c b/gcc/ada/terminals.c
+--- a/gcc/ada/terminals.c	2017-01-20 16:51:39.461999000 +0200
++++ b/gcc/ada/terminals.c	2018-03-17 10:49:07.711162156 +0200
+@@ -1061,12 +1061,6 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
+-/* On some system termio is either absent or including it will disable termios
+-   (HP-UX) */
+-#if !defined (__hpux__) && !defined (BSD) && !defined (__APPLE__) \
+-  && !defined (__rtems__)
+-#   include <termio.h>
+-#endif
+ 
+ #include <sys/ioctl.h>
+ #include <termios.h>
+diff -Naur a/gnattools/Makefile.in b/gnattools/Makefile.in
+--- a/gnattools/Makefile.in	2016-05-16 11:55:12.396535000 +0300
++++ b/gnattools/Makefile.in	2018-03-17 10:50:01.324163991 +0200
+@@ -52,7 +52,7 @@
+ ADA_CFLAGS=@ADA_CFLAGS@
+ 
+ # Variables for gnattools.
+-ADAFLAGS= -gnatpg -gnata
++ADAFLAGS= -gnatpg -gnata -gnatwn
+ 
+ # For finding the GCC build dir, which is used far too much
+ GCC_DIR=../gcc
