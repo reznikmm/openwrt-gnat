@@ -1,0 +1,14 @@
+os:
+  - linux
+
+services:
+  - docker
+
+language: generic
+
+script:
+  - docker build .
+
+notifications:
+  irc: "irc.rusnet.org.ru#ada-commits"
+
