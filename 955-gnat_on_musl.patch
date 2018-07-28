@@ -65,3 +65,31 @@ diff -Naur a/gnattools/Makefile.in b/gnattools/Makefile.in
  
  # For finding the GCC build dir, which is used far too much
  GCC_DIR=../gcc
+diff -Naur a/libada/configure b/libada/configure
+--- a/libada/configure	2016-12-21 07:53:24.000000000 +0000
++++ b/libada/configure	2018-07-28 09:29:02.454347237 +0000
+@@ -2956,9 +2956,7 @@
+ 
+ 
+ # Determine what to build for 'gnatlib'
+-if test $build = $target \
+-   && test ${enable_shared} = yes ; then
+-  # Note that build=target is almost certainly the wrong test; FIXME
++if test ${enable_shared} = yes ; then
+   default_gnatlib_target="gnatlib-shared"
+ else
+   default_gnatlib_target="gnatlib-plain"
+diff -Naur a/libada/configure.ac b/libada/configure.ac
+--- a/libada/configure.ac	2016-01-04 14:30:50.000000000 +0000
++++ b/libada/configure.ac	2018-07-28 09:28:38.836346429 +0000
+@@ -127,9 +127,7 @@
+ AC_PROG_LN_S
+ 
+ # Determine what to build for 'gnatlib'
+-if test $build = $target \
+-   && test ${enable_shared} = yes ; then
+-  # Note that build=target is almost certainly the wrong test; FIXME
++if test ${enable_shared} = yes ; then
+   default_gnatlib_target="gnatlib-shared"
+ else
+   default_gnatlib_target="gnatlib-plain"

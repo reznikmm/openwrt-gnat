@@ -34,4 +34,5 @@ RUN apt-get update && \
     make -j1 toolchain/install V=w ;\
     make clean ;\
     rm -rf dl tmp ;\
+    rm staging_dir/toolchain-arm_cortex-a9+vfpv3_gcc-6.3.0_musl-1.1.16_eabi/lib/lib ;\
   "
