@@ -93,3 +93,15 @@ diff -Naur a/libada/configure.ac b/libada/configure.ac
    default_gnatlib_target="gnatlib-shared"
  else
    default_gnatlib_target="gnatlib-plain"
+diff -Naur a/gcc/ada/terminals.c b/gcc/ada/terminals.c
+--- a/gcc/ada/terminals.c	2018-07-28 12:49:11.739758103 +0000
++++ b/gcc/ada/terminals.c	2018-07-28 13:17:42.402816629 +0000
+@@ -1113,7 +1113,7 @@
+ #if defined (__APPLE__) || defined (BSD)
+ #define USE_OPENPTY
+ #elif defined (__linux__)
+-#define USE_GETPT
++#define USE_OPENPTY
+ #elif defined (__sun__)
+ #define USE_CLONE_DEVICE "/dev/ptmx"
+ #elif defined (_AIX)
