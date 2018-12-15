@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM ubuntu:18.04
 COPY *.patch diffconfig /tmp/
 RUN apt-get update && \
   apt install -y --no-install-recommends \
@@ -14,7 +14,7 @@ RUN apt-get update && \
   unzip \
   time \
   python \
-  gnat-6 \
+  gnat-7 \
   sudo \
   file \
   wget \
@@ -24,15 +24,15 @@ RUN apt-get update && \
   su - openwrt -c " \
     set -e ;\
     git config --global http.sslVerify false ;\
-    git clone --depth 2  -b lede-17.01 https://github.com/openwrt/openwrt.git ;\
+    git clone --depth 2 -b openwrt-18.06 https://github.com/openwrt/openwrt.git ;\
     cd openwrt ;\
     patch -p1 < /tmp/openwrt-enable_ada.patch ;\
-    cp /tmp/955-gnat_on_musl.patch toolchain/gcc/patches/6.3.0/ ;\
+    cp /tmp/955-gnat_on_musl.patch toolchain/gcc/patches/7.3.0/ ;\
     cp /tmp/diffconfig .config ;\
     ./scripts/feeds update -a ;\
     make defconfig ;\
     make -j1 toolchain/install V=w ;\
     make clean ;\
-    rm -rf dl tmp ;\
-    rm staging_dir/toolchain-arm_cortex-a9+vfpv3_gcc-6.3.0_musl-1.1.16_eabi/lib/lib ;\
+    rm -rf dl tmp build_dir ;\
+    rm staging_dir/toolchain-arm_cortex-a9+vfpv3_gcc-7.3.0_musl_eabi/lib/lib ;\
   "

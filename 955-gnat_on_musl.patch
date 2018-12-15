@@ -1,6 +1,6 @@
-diff -Naur a/gcc/ada/gcc-interface/Makefile.in b/gcc/ada/gcc-interface/Makefile.in
---- a/gcc/ada/gcc-interface/Makefile.in	2017-12-04 15:41:46.640816000 +0200
-+++ b/gcc/ada/gcc-interface/Makefile.in	2018-03-17 15:45:36.629770758 +0200
+diff -Naur gcc-7.3.0.old/gcc/ada/gcc-interface/Makefile.in gcc-7.3.0/gcc/ada/gcc-interface/Makefile.in
+--- gcc-7.3.0.old/gcc/ada/gcc-interface/Makefile.in	2018-12-13 17:49:43.001927878 +0200
++++ gcc-7.3.0/gcc/ada/gcc-interface/Makefile.in	2018-12-13 17:53:01.615721223 +0200
 @@ -1932,7 +1932,7 @@
  endif
  
@@ -10,9 +10,9 @@ diff -Naur a/gcc/ada/gcc-interface/Makefile.in b/gcc/ada/gcc-interface/Makefile.
    LIBGNAT_TARGET_PAIRS = \
    a-intnam.ads<a-intnam-linux.ads \
    s-inmaop.adb<s-inmaop-posix.adb \
-diff -Naur a/gcc/ada/s-taprop-linux.adb b/gcc/ada/s-taprop-linux.adb
---- a/gcc/ada/s-taprop-linux.adb	2017-01-23 15:24:47.196622000 +0200
-+++ b/gcc/ada/s-taprop-linux.adb	2018-03-17 18:12:28.885072247 +0200
+diff -Naur gcc-7.3.0.old/gcc/ada/s-taprop-linux.adb gcc-7.3.0/gcc/ada/s-taprop-linux.adb
+--- gcc-7.3.0.old/gcc/ada/s-taprop-linux.adb	2018-12-13 17:49:42.989927767 +0200
++++ gcc-7.3.0/gcc/ada/s-taprop-linux.adb	2018-12-13 17:53:01.615721223 +0200
 @@ -271,14 +271,19 @@
  
           begin
@@ -37,9 +37,9 @@ diff -Naur a/gcc/ada/s-taprop-linux.adb b/gcc/ada/s-taprop-linux.adb
  
              Result := pthread_rwlock_init (L.RW'Access, RWlock_Attr'Access);
  
-diff -Naur a/gcc/ada/terminals.c b/gcc/ada/terminals.c
---- a/gcc/ada/terminals.c	2017-01-20 16:51:39.461999000 +0200
-+++ b/gcc/ada/terminals.c	2018-03-17 10:49:07.711162156 +0200
+diff -Naur gcc-7.3.0.old/gcc/ada/terminals.c gcc-7.3.0/gcc/ada/terminals.c
+--- gcc-7.3.0.old/gcc/ada/terminals.c	2018-12-13 17:49:42.997927841 +0200
++++ gcc-7.3.0/gcc/ada/terminals.c	2018-12-13 17:53:01.615721223 +0200
 @@ -1061,12 +1061,6 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -53,9 +53,18 @@ diff -Naur a/gcc/ada/terminals.c b/gcc/ada/terminals.c
  
  #include <sys/ioctl.h>
  #include <termios.h>
-diff -Naur a/gnattools/Makefile.in b/gnattools/Makefile.in
---- a/gnattools/Makefile.in	2016-05-16 11:55:12.396535000 +0300
-+++ b/gnattools/Makefile.in	2018-03-17 10:50:01.324163991 +0200
+@@ -1112,7 +1106,7 @@
+ #if defined (__APPLE__) || defined (BSD)
+ #define USE_OPENPTY
+ #elif defined (__linux__)
+-#define USE_GETPT
++#define USE_OPENPTY
+ #elif defined (__sun__)
+ #define USE_CLONE_DEVICE "/dev/ptmx"
+ #elif defined (_AIX)
+diff -Naur gcc-7.3.0.old/gnattools/Makefile.in gcc-7.3.0/gnattools/Makefile.in
+--- gcc-7.3.0.old/gnattools/Makefile.in	2018-12-13 17:49:42.377922068 +0200
++++ gcc-7.3.0/gnattools/Makefile.in	2018-12-13 17:53:01.615721223 +0200
 @@ -52,7 +52,7 @@
  ADA_CFLAGS=@ADA_CFLAGS@
  
@@ -65,43 +74,3 @@ diff -Naur a/gnattools/Makefile.in b/gnattools/Makefile.in
  
  # For finding the GCC build dir, which is used far too much
  GCC_DIR=../gcc
-diff -Naur a/libada/configure b/libada/configure
---- a/libada/configure	2016-12-21 07:53:24.000000000 +0000
-+++ b/libada/configure	2018-07-28 09:29:02.454347237 +0000
-@@ -2956,9 +2956,7 @@
- 
- 
- # Determine what to build for 'gnatlib'
--if test $build = $target \
--   && test ${enable_shared} = yes ; then
--  # Note that build=target is almost certainly the wrong test; FIXME
-+if test ${enable_shared} = yes ; then
-   default_gnatlib_target="gnatlib-shared"
- else
-   default_gnatlib_target="gnatlib-plain"
-diff -Naur a/libada/configure.ac b/libada/configure.ac
---- a/libada/configure.ac	2016-01-04 14:30:50.000000000 +0000
-+++ b/libada/configure.ac	2018-07-28 09:28:38.836346429 +0000
-@@ -127,9 +127,7 @@
- AC_PROG_LN_S
- 
- # Determine what to build for 'gnatlib'
--if test $build = $target \
--   && test ${enable_shared} = yes ; then
--  # Note that build=target is almost certainly the wrong test; FIXME
-+if test ${enable_shared} = yes ; then
-   default_gnatlib_target="gnatlib-shared"
- else
-   default_gnatlib_target="gnatlib-plain"
-diff -Naur a/gcc/ada/terminals.c b/gcc/ada/terminals.c
---- a/gcc/ada/terminals.c	2018-07-28 12:49:11.739758103 +0000
-+++ b/gcc/ada/terminals.c	2018-07-28 13:17:42.402816629 +0000
-@@ -1113,7 +1113,7 @@
- #if defined (__APPLE__) || defined (BSD)
- #define USE_OPENPTY
- #elif defined (__linux__)
--#define USE_GETPT
-+#define USE_OPENPTY
- #elif defined (__sun__)
- #define USE_CLONE_DEVICE "/dev/ptmx"
- #elif defined (_AIX)
