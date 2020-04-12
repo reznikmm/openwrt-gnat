@@ -10,7 +10,7 @@ docker run --user openwrt --tty --interactive --volume \
 Then setup environment:
 ```
 export STAGING_DIR=/home/openwrt/openwrt/staging_dir/
-export PATH=$STAGING_DIR/toolchain-arm_cortex-a9+vfpv3_gcc-6.3.0_musl-1.1.16_eabi/bin:$PATH
+export PATH=$STAGING_DIR/toolchain-arm_cortex-a9+vfpv3_gcc-7.5.0_musl_eabi/bin:$PATH
 ```
 
 Compile "hello world":
