@@ -1,23 +1,20 @@
-diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
-index 34c597c..2479f3c 100644
---- a/toolchain/gcc/Config.in
-+++ b/toolchain/gcc/Config.in
-@@ -73,3 +73,10 @@ config INSTALL_GCCGO
+--- a/toolchain/gcc/Config.in	2021-12-26 21:28:40.442984171 +0200
++++ b/toolchain/gcc/Config.in	2021-12-26 21:28:06.010645034 +0200
+@@ -68,3 +68,11 @@
  	default n
  	help
  	    Build/install GNU gccgo compiler ?
 +
 +config INSTALL_ADA
-+	bool
-+	prompt "Build/install Ada compiler?" if TOOLCHAINOPTS
-+	default n
-+	help
-+	    Build/install GNU Ada compiler? Working native ada compiler required.
-diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index c6e01b5..46ee37c 100644
---- a/toolchain/gcc/common.mk
-+++ b/toolchain/gcc/common.mk
-@@ -74,12 +74,16 @@
++   bool
++   prompt "Build/install Ada compiler?" if TOOLCHAINOPTS
++   default n
++   help
++       Build/install GNU Ada compiler? Working native ada compiler required.
++
+--- a/toolchain/gcc/common.mk	2021-12-26 21:27:18.182173656 +0200
++++ b/toolchain/gcc/common.mk	2021-12-26 21:30:22.239985884 +0200
+@@ -67,12 +67,16 @@
  HOST_STAMP_INSTALLED:=$(HOST_BUILD_PREFIX)/stamp/.gcc_$(GCC_VARIANT)_installed
  
  SEP:=,
@@ -34,5 +31,5 @@ index c6e01b5..46ee37c 100644
 +endif
 +
  export libgcc_cv_fixed_point=no
- ifdef CONFIG_USE_UCLIBC
-   export glibcxx_cv_c99_math_tr1=no
+ ifdef CONFIG_INSTALL_GCCGO
+   export libgo_cv_c_split_stack_supported=no

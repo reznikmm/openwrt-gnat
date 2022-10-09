@@ -1,19 +1,48 @@
-diff -Naur gcc-7.3.0.old/gcc/ada/gcc-interface/Makefile.in gcc-7.3.0/gcc/ada/gcc-interface/Makefile.in
---- gcc-7.3.0.old/gcc/ada/gcc-interface/Makefile.in	2018-12-13 17:49:43.001927878 +0200
-+++ gcc-7.3.0/gcc/ada/gcc-interface/Makefile.in	2018-12-13 17:53:01.615721223 +0200
-@@ -1932,7 +1932,7 @@
+diff -Naur gcc-9.3.0.old/gcc/ada/Makefile.rtl gcc-9.3.0/gcc/ada/Makefile.rtl
+--- gcc-9.3.0.old/gcc/ada/Makefile.rtl	2020-03-12 13:07:20.000000000 +0200
++++ gcc-9.3.0/gcc/ada/Makefile.rtl	2021-12-27 11:32:18.070484887 +0200
+@@ -2102,7 +2102,7 @@
  endif
  
  # ARM linux, GNU eabi
 -ifeq ($(strip $(filter-out arm% linux-gnueabi%,$(target_cpu) $(target_os))),)
 +ifeq ($(strip $(filter-out arm% linux-gnueabi% linux-muslgnueabi%,$(target_cpu) $(target_os))),)
    LIBGNAT_TARGET_PAIRS = \
-   a-intnam.ads<a-intnam-linux.ads \
-   s-inmaop.adb<s-inmaop-posix.adb \
-diff -Naur gcc-7.3.0.old/gcc/ada/s-taprop-linux.adb gcc-7.3.0/gcc/ada/s-taprop-linux.adb
---- gcc-7.3.0.old/gcc/ada/s-taprop-linux.adb	2018-12-13 17:49:42.989927767 +0200
-+++ gcc-7.3.0/gcc/ada/s-taprop-linux.adb	2018-12-13 17:53:01.615721223 +0200
-@@ -271,14 +271,19 @@
+   a-intnam.ads<libgnarl/a-intnam__linux.ads \
+   s-inmaop.adb<libgnarl/s-inmaop__posix.adb \
+@@ -2394,7 +2394,7 @@ ifeq ($(strip $(filter-out %x86_64 linux%,$(target_cpu) $(target_os))),)
+   s-taspri.ads<libgnarl/s-taspri__posix.ads \
+   g-sercom.adb<libgnat/g-sercom__linux.adb \
+   $(TRASYM_DWARF_UNIX_PAIRS) \
+-  s-tsmona.adb<libgnat/s-tsmona__linux.adb \
++  s-tsmona.adb<libgnat/s-tsmona.adb \
+   $(ATOMICS_TARGET_PAIRS) \
+   $(X86_64_TARGET_PAIRS) \
+   system.ads<libgnat/system-linux-x86.ads
+diff -Naur gcc-9.3.0.old/gcc/ada/libgnarl/s-taprop__linux.adb gcc-9.3.0/gcc/ada/libgnarl/s-taprop__linux.adb
+--- gcc-9.3.0.old/gcc/ada/libgnarl/s-taprop__linux.adb	2020-03-12 13:07:21.000000000 +0200
++++ gcc-9.3.0/gcc/ada/libgnarl/s-taprop__linux.adb	2021-12-27 11:32:18.074484931 +0200
+@@ -349,6 +349,8 @@ package body System.Task_Primitives.Operations is
+    ----------------
+
+    function Init_Mutex (L : RTS_Lock_Ptr; Prio : Any_Priority) return C.int is
++      pragma Unreferenced (Prio);
++
+       Mutex_Attr : aliased pthread_mutexattr_t;
+       Result, Result_2 : C.int;
+
+@@ -365,10 +367,6 @@ package body System.Task_Primitives.Operations is
+            (Mutex_Attr'Access, PTHREAD_PRIO_PROTECT);
+          pragma Assert (Result = 0);
+
+-         Result := pthread_mutexattr_setprioceiling
+-           (Mutex_Attr'Access, Prio_To_Linux_Prio (Prio));
+-         pragma Assert (Result = 0);
+-
+       elsif Locking_Policy = 'I' then
+          Result := pthread_mutexattr_setprotocol
+            (Mutex_Attr'Access, PTHREAD_PRIO_INHERIT);
+@@ -405,14 +405,19 @@
  
           begin
              --  Set the rwlock to prefer writer to avoid writers starvation
@@ -37,23 +66,10 @@ diff -Naur gcc-7.3.0.old/gcc/ada/s-taprop-linux.adb gcc-7.3.0/gcc/ada/s-taprop-l
  
              Result := pthread_rwlock_init (L.RW'Access, RWlock_Attr'Access);
  
-diff -Naur gcc-7.3.0.old/gcc/ada/terminals.c gcc-7.3.0/gcc/ada/terminals.c
---- gcc-7.3.0.old/gcc/ada/terminals.c	2018-12-13 17:49:42.997927841 +0200
-+++ gcc-7.3.0/gcc/ada/terminals.c	2018-12-13 17:53:01.615721223 +0200
-@@ -1061,12 +1061,6 @@
- #include <stdio.h>
- #include <stdlib.h>
- 
--/* On some system termio is either absent or including it will disable termios
--   (HP-UX) */
--#if !defined (__hpux__) && !defined (BSD) && !defined (__APPLE__) \
--  && !defined (__rtems__)
--#   include <termio.h>
--#endif
- 
- #include <sys/ioctl.h>
- #include <termios.h>
-@@ -1112,7 +1106,7 @@
+diff -Naur gcc-9.3.0.old/gcc/ada/terminals.c gcc-9.3.0/gcc/ada/terminals.c
+--- gcc-9.3.0.old/gcc/ada/terminals.c	2020-03-12 13:07:21.000000000 +0200
++++ gcc-9.3.0/gcc/ada/terminals.c	2021-12-27 11:32:18.074484931 +0200
+@@ -1150,7 +1150,7 @@
  #if defined (__APPLE__) || defined (BSD)
  #define USE_OPENPTY
  #elif defined (__linux__)
@@ -62,9 +78,9 @@ diff -Naur gcc-7.3.0.old/gcc/ada/terminals.c gcc-7.3.0/gcc/ada/terminals.c
  #elif defined (__sun__)
  #define USE_CLONE_DEVICE "/dev/ptmx"
  #elif defined (_AIX)
-diff -Naur gcc-7.3.0.old/gnattools/Makefile.in gcc-7.3.0/gnattools/Makefile.in
---- gcc-7.3.0.old/gnattools/Makefile.in	2018-12-13 17:49:42.377922068 +0200
-+++ gcc-7.3.0/gnattools/Makefile.in	2018-12-13 17:53:01.615721223 +0200
+diff -Naur gcc-9.3.0.old/gnattools/Makefile.in gcc-9.3.0/gnattools/Makefile.in
+--- gcc-9.3.0.old/gnattools/Makefile.in	2020-03-12 13:07:23.000000000 +0200
++++ gcc-9.3.0/gnattools/Makefile.in	2021-12-27 11:32:18.074484931 +0200
 @@ -52,7 +52,7 @@
  ADA_CFLAGS=@ADA_CFLAGS@
  
